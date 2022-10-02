@@ -6,17 +6,8 @@
         <h2>{{ username }}</h2>
         {% if logname == username %}
         <a href="/accounts/edit/">Edit profile</a>
-        <form
-          action="/accounts/logout/"
-          method="post"
-          enctype="multipart/form-data"
-        >
-          <input
-            class="btn btn-sm btn-secondary"
-            type="submit"
-            name="logout"
-            value="Logout"
-          />
+        <form action="/accounts/logout/" method="post" enctype="multipart/form-data">
+          <input class="btn btn-sm btn-secondary" type="submit" name="logout" value="Logout" />
         </form>
         {% endif %}
       </div>
@@ -24,34 +15,15 @@
       <div id="following_status">
         {% if logname_follows_username %}
         <b>following</b>
-        <form
-          class="follow_button"
-          action="/following/?target=/"
-          method="post"
-          enctype="multipart/form-data"
-        >
-          <input
-            class="btn btn-sm btn-secondary"
-            type="submit"
-            name="unfollow"
-            value="unfollow"
-          />
+        <form class="follow_button" action="/following/?target=/" method="post" enctype="multipart/form-data">
+          <input class="btn btn-sm btn-secondary" type="submit" name="unfollow" value="unfollow" />
           <input type="hidden" name="username" value="{{ username }}" />
           <input type="hidden" name="operation" value="unfollow" />
         </form>
         {% else %}
         <b>not following</b>
-        <form
-          action="/following/?target=/"
-          method="post"
-          enctype="multipart/form-data"
-        >
-          <input
-            class="btn btn-sm btn-primary"
-            type="submit"
-            name="follow"
-            value="follow"
-          />
+        <form action="/following/?target=/" method="post" enctype="multipart/form-data">
+          <input class="btn btn-sm btn-primary" type="submit" name="follow" value="follow" />
           <input type="hidden" name="username" value="{{ username }}" />
           <input type="hidden" name="operation" value="follow" />
         </form>
@@ -70,38 +42,32 @@
         <a href="/users/{{ username }}/following/">{{ following }} following</a>
       </div>
       <div>{{ fullname }}</div>
+      {% if logname == username %}
       <div id="upload_photo">
-        <form
-          action="/posts/?target=/users/{{ logname }}/"
-          method="post"
-          enctype="multipart/form-data"
-        >
+        <form action="/posts/?target=/users/{{ logname }}/" method="post" enctype="multipart/form-data">
           <input type="file" name="file" accept="image/*" required />
           <input type="submit" name="create_post" value="upload new post" />
           <input type="hidden" name="operation" value="create" />
         </form>
       </div>
-    </div>
+      {% endif %}
 
-    <div id="user_posts">
-      {% for row in posts|batch(3)%}
-      <div class="row">
-        {% for col in row %}
-        <div class="col-md user_post">
-          <a href="/posts/{{ col['postid'] }}/">
-            <img
-              class="photo"
-              alt="{{ col['img_url'] }}"
-              src="{{ col['filename'] }}"
-            />
-          </a>
+      <div>
+        <div id="user_posts">
+          {% for row in posts|batch(3)%}
+          <div class="row">
+            {% for col in row %}
+            <div class="col-md user_post">
+              <a href="/posts/{{ col['postid'] }}/">
+                <img class="photo" alt="{{ col['img_url'] }}" src="{{ col['filename'] }}" />
+              </a>
+            </div>
+            {% endfor %} {% for space in range(3 - posts|length) %}
+            <div class="col-md user_post"></div>
+            {% endfor %}
+          </div>
+          {% endfor %}
         </div>
-        {% endfor %} {% for space in range(3 - posts|length) %}
-        <div class="col-md user_post"></div>
-        {% endfor %}
       </div>
-      {% endfor %}
     </div>
-  </div>
-</div>
-{% endblock %}
+    {% endblock %}

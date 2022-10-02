@@ -1,0 +1,79 @@
+#!/bin/bash
+
+# curl -X POST http://localhost:8000/accounts/ \
+#   -F username=awdeorio \
+#   -F password=1234 \
+#   -F operation=login \
+#   --cookie-jar cookies.txt
+
+# curl -X POST http://localhost:8000/accounts/ \
+#   -F username=awdeorio \
+#   -F password=password \
+#   -F operation=login \
+#   --cookie-jar cookies.txt
+
+# curl -X POST http://localhost:8000/accounts/ \
+#   -F username= \
+#   -F password= \
+#   -F operation=login \
+#   --cookie-jar cookies.txt
+
+# curl -X POST http://localhost:8000/accounts/ \
+#   -F operation=login \
+#   --cookie-jar cookies.txt
+
+# curl -X POST http://localhost:8000/accounts/ \
+#   -F username=oogie \
+#   -F fullname=oogieboogie \
+#   -F email=a@gmail.com \
+#   -F password=1234 \
+#   -F file=@./var/uploads/2ec7cf8ae158b3b1f40065abfb33e81143707842.jpg \
+#   -F operation=create \
+#   --cookie-jar cookies.txt
+
+# curl -X POST http://localhost:8000/accounts/ \
+#   -F username=test123 \
+#   -F password=1234 \
+#   -F operation=login \
+#   --cookie-jar cookies.txt
+
+# curl -X POST http://localhost:8000/accounts/ \
+#   -F username=test123 \
+#   -F password=1234 \
+#   -F operation=update_password \
+  # --cookie-jar cookies.txt
+
+# curl -X POST http://localhost:8000/posts/ \
+#   -F postid=1 \
+#   -F operation=delete \
+#   -b cookies.txt
+
+# curl -X POST http://localhost:8000/posts/ \
+#   -F postid=2 \
+#   -F operation=delete \
+#   -b cookies.txt
+
+# curl -X POST http://localhost:8000/accounts/ \
+#   -F fullname='Not awdeorio' \
+#   -F email='Not an email' \
+#   -F operation=edit_account \
+#   -b cookies.txt
+
+# curl -X POST http://localhost:8000/accounts/ \
+#   -F operation=delete \
+#   -b cookies.txt \
+#   --cookie-jar cookies.txt
+
+# curl -X POST http://localhost:8000/accounts/ \
+#   -F username=oogie \
+#   -F password=1234 \
+#   -F operation=login \
+#   --cookie-jar cookies.txt
+
+# curl -X POST http://localhost:8000/accounts/ \
+#   -F operation=delete \
+#   -b cookies.txt
+
+# curl -X POST http://localhost:8000/accounts/logout/ \
+#   -F operation=logout \
+#   -b cookies.txt

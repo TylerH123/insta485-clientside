@@ -52,7 +52,7 @@ def put_new_user(user_data):
         'INSERT INTO '
         'users (username, fullname, email, filename, password) '
         'VALUES (?, ?, ?, ?, ?)',
-        (*user_data, )
+        (user_data[0], user_data[1], user_data[2], user_data[4], user_data[3])
     )
 
 
