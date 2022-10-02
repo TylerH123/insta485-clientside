@@ -1,0 +1,121 @@
+{% extends "base.html" %} {% block body %}
+<div id="site_body">
+  <div id="feed">
+    <div class="post">
+      <div class="post_header">
+        <a href="/users/{{ owner }}/">
+          <div class="post_header_left">
+            <img class="pfp" alt="{{ owner }}" src="{{ user_filename }}" />
+            <div class="username">{{ owner }}</div>
+          </div>
+        </a>
+        <a href="/posts/{{ postid }}/">
+          <div class="timestamp">{{ created }}</div>
+        </a>
+      </div>
+      <img alt="image url" class="photo" src="{{ filename }}" />
+      <div class="post_stats">
+        <div>
+          {{ likes }} {% if likes == 1 %} like {% else %} likes {% endif %}
+        </div>
+        {% if not_liked %}
+        <form
+          class="like_button"
+          action="/likes/?target=/posts/{{ postid }}/"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <input type="hidden" name="operation" value="like" />
+          <input type="hidden" name="postid" value="{{ postid }}" />
+          <input
+            class="btn btn-sm btn-primary"
+            type="submit"
+            name="like"
+            value="like"
+          />
+        </form>
+        {% else %}
+        <form
+          action="/likes/?target=/posts/{{ postid }}/"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <input type="hidden" name="operation" value="unlike" />
+          <input type="hidden" name="postid" value="{{ postid }}" />
+          <input
+            class="btn btn-sm btn-danger"
+            type="submit"
+            name="unlike"
+            value="unlike"
+          />
+        </form>
+        {% endif %}
+      </div>
+      <div class="comment_section">
+        {% for comment in comments %}
+        <div class="comment">
+          <a href="/users/{{ comment['owner'] }}/">
+            <div class="username">{{ comment['owner'] }}</div>
+          </a>
+          <p>{{ comment['text'] }}</p>
+          {% if logname == comment['owner'] %}
+          <form
+            class="delete_comment"
+            action="/comments/?target=/posts/{{ postid }}/"
+            method="post"
+            enctype="multipart/form-data"
+          >
+            <input type="hidden" name="operation" value="delete" />
+            <input
+              type="hidden"
+              name="commentid"
+              value="{{ comment['commentid'] }}"
+            />
+            <input
+              class="btn btn-sm btn-secondary"
+              type="submit"
+              name="uncomment"
+              value="delete"
+            />
+          </form>
+          {% endif %}
+        </div>
+        {% endfor %}
+        <form
+          class="comment_input"
+          action="/comments/?target=/posts/{{ postid }}/"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <input type="hidden" name="operation" value="create" />
+          <input type="hidden" name="postid" value="{{ postid }}" />
+          <input class="comment_input_text" type="text" name="text" required />
+          <input
+            class="btn btn-sm btn-primary"
+            type="submit"
+            name="comment"
+            value="comment"
+          />
+        </form>
+        {% if is_owner %}
+        <form
+          class="delete_post"
+          action="/posts/?target=/users/{{ logname }}/"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <input type="hidden" name="operation" value="delete" />
+          <input type="hidden" name="postid" value="{{ postid }}" />
+          <input
+            class="btn btn-sm btn-danger"
+            type="submit"
+            name="delete"
+            value="delete this post"
+          />
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

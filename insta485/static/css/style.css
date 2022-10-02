@@ -1,0 +1,267 @@
+body {
+  padding: 16px;
+}
+
+a {
+  text-decoration: none !important;
+  color: black !important;
+}
+
+p {
+  margin: 0px;
+}
+
+.btn {
+  height: fit-content;
+}
+
+#site_body {
+  display: flex;
+  justify-content: center;
+}
+
+#header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#header_title {
+  margin: 0;
+}
+
+#header_left {
+  display: flex;
+  gap: 12px;
+}
+
+#header_right {
+  display: flex;
+  gap: 32px;
+}
+
+#header_separator {
+  margin-bottom: 32px;
+}
+
+hr {
+  border-top: 1px solid lightgrey;
+}
+
+#login_box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -180px;
+  margin-top: -240px;
+  min-height: 440px;
+  width: 360px;
+
+  border: solid 1px lightgrey;
+  border-radius: 4px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 12px;
+}
+
+#login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+}
+
+#login_bottom_message {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+#edit_account {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px;
+  width: 320px;
+}
+
+.file_input {
+  outline: 1px solid lightgrey;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.login_label {
+  margin-bottom: -12px;
+}
+
+#feed {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 640px;
+  width: 100%;
+  align-items: center;
+}
+
+.post {
+  margin: 16px;
+  outline: 1px solid lightgrey;
+  border-radius: 4px;
+  width: 480px;
+  padding-bottom: 16px;
+}
+
+.post_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+}
+
+.post_header_left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.timestamp {
+  color: grey
+}
+
+.pfp {
+  height: 32px;
+  width: 32px;
+}
+
+.pfp_large {
+  height: 64px;
+  width: 64px;
+}
+
+.username,
+.link {
+  font-weight: bold;
+}
+
+.photo {
+  width: 100%;
+}
+
+.post_stats {
+  padding: 16px 16px 4px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comment_section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0px 16px 8px 16px;
+}
+
+.comment {
+  display: flex;
+  gap: 8px;
+}
+
+.delete_comment {
+  margin-left: auto;
+}
+
+.comment_input {
+  display: flex;
+  width: 100%;
+  gap: 8px;
+}
+
+.comment_input_text {
+  flex-grow: 1;
+}
+
+.delete_post {
+  margin-top: 32px;
+  margin-left: auto;
+}
+
+#user_info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 640px;
+  margin-bottom: 24px;
+}
+
+#user_head {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+#following_status {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-top: -8px;
+}
+
+.follow_button {
+  display: inline;
+}
+
+#user_stats {
+  display: flex;
+  gap: 16px;
+}
+
+#upload_photo {
+  border: 1px solid lightgrey;
+  border-radius: 4px;
+  margin-top: 8px;
+  padding: 16px;
+}
+
+#user_posts {
+  width: 100%;
+}
+
+.user_post {
+  padding: 4px;
+}
+
+.follower_list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.follower_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  outline: 1px solid lightgrey;
+  border-radius: 4px;
+}
+
+.follower_item_left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.follower_item_right {
+  color: grey;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
