@@ -288,6 +288,7 @@ def get_posts():
     cur = connection.execute(
         'SELECT * '
         'FROM posts '
+        'ORDER BY postid DESC'
     )
     return cur.fetchall()
 
