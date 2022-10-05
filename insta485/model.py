@@ -306,7 +306,7 @@ def get_post_data(postid):
     post['user_filename'] = '/uploads/' + get_user_photo(post['owner'])
     post['comments'] = get_post_comments(postid)
     post['likes'] = get_post_like_count(postid)
-    post['created'] = arrow.get(post['created']).humanize()
+    post['time_since_created'] = arrow.get(post['created']).humanize()
     return post
 
 
