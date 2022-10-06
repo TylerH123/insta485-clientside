@@ -104,6 +104,8 @@ def post_likes():
     username = flask.request.authorization['username']
     auth(username) 
   postid = flask.request.args.get('postid')
+  if postid is None:
+    flask.abort(404)
   context = {
     'postid': int(postid),
     'url': '/api/v1/likes/' + postid + '/'
@@ -111,6 +113,7 @@ def post_likes():
   if not model.user_like_post(username, postid): 
     res = 200 
   else:
+    model.update_likes(True, username, postid)
     res = 201
 
   return flask.jsonify(**context), res
