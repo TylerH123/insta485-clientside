@@ -7,6 +7,7 @@ URLs include:
 import flask
 import insta485
 from insta485 import model
+import pprint
 
 
 @insta485.app.route('/uploads/<path:name>')
@@ -32,13 +33,13 @@ def show_index():
         'logname': login_user,
         'posts': []
     }
-    posts = model.get_posts()
+    posts = model.get_posts(login_user)
+
     # Get all relevant data for each post
     for post in posts:
         postid = post['postid']
         post_data = model.get_post_data(postid)
         post_data['not_liked'] = model.user_like_post(login_user, postid)
-        post_data['is_following'] = model.is_following(postid, login_user)
         context['posts'].append(post_data)
     return flask.render_template('index.html', **context)
 

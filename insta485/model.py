@@ -282,14 +282,32 @@ def is_following(postid, username):
 
 
 # ===== POSTS =====
-def get_posts():
-    """Get posts from table."""
+def get_posts(username, limit=10, offset=0, postid_lte=None):
+    """Get posts from table by users followed by username."""
     connection = insta485.model.get_db()
-    cur = connection.execute(
-        'SELECT * '
-        'FROM posts '
-        'ORDER BY postid DESC'
-    )
+    if postid_lte is None:
+        cur = connection.execute(
+            'SELECT DISTINCT posts.* '
+            'FROM posts, following '
+            'WHERE (following.username1 = ?'
+            'AND posts.owner = following.username2) OR '
+            'posts.owner = ? '
+            'ORDER BY postid DESC '
+            'LIMIT ? OFFSET ?',
+            (username, username, limit, offset)
+        )
+    else:
+        cur = connection.execute(
+            'SELECT DISTINCT posts.* '
+            'FROM posts, following '
+            'WHERE ((following.username1 = ?'
+            'AND posts.owner = following.username2) OR '
+            'posts.owner = ?) AND '
+            'posts.postid <= ? '
+            'ORDER BY postid DESC '
+            'LIMIT ? OFFSET ?',
+            (username, username, postid_lte, limit, offset)
+        )
     return cur.fetchall()
 
 
