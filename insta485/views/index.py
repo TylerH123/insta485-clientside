@@ -39,7 +39,7 @@ def show_index():
     for post in posts:
         postid = post['postid']
         post_data = model.get_post_data(postid)
-        post_data['not_liked'] = model.user_like_post(login_user, postid)
+        post_data['not_liked'] = model.user_like_post(login_user, postid) == 0
         context['posts'].append(post_data)
     return flask.render_template('index.html', **context)
 
@@ -85,7 +85,7 @@ def show_posts(postid):
         context[entry] = post[entry]
     post_owner = post['owner']
     context['is_owner'] = post_owner == login_user
-    context['not_liked'] = model.user_like_post(login_user, postid)
+    context['not_liked'] = model.user_like_post(login_user, postid) == 0
     return flask.render_template('post.html', **context)
 
 
@@ -261,20 +261,20 @@ def update_likes():
     if 'target' in flask.request.args:
         redirect = flask.request.args['target']
     if operation == 'like':
-        username = flask.session['login']
+        login_user = flask.session['login']
         postid = flask.request.form.get('postid')
         if postid is None:
             flask.abort(404)
-        if model.user_like_post(username, postid):
-            model.update_likes(True, username, postid)
+        if not model.user_like_post(login_user, postid):
+            model.create_like(login_user, postid)
         else:
             flask.abort(409)
         return flask.redirect(redirect)
     if operation == 'unlike':
-        username = flask.session['login']
+        login_user = flask.session['login']
         postid = flask.request.form['postid']
-        if not model.user_like_post(username, postid):
-            model.update_likes(False, username, postid)
+        if model.user_like_post(login_user, postid):
+            model.delete_like(login_user, postid=postid)
         else:
             flask.abort(409)
         return flask.redirect(redirect)
@@ -291,21 +291,21 @@ def update_comments():
     if 'target' in flask.request.args:
         redirect = flask.request.args['target']
     if operation == 'create':
-        username = flask.session['login']
+        login_user = flask.session['login']
         postid = flask.request.form.get('postid')
         text = flask.request.form.get('text')
         if postid is None or text is None or postid == '' or text == '':
             flask.abort(400)
-        model.create_comment(username, postid, text)
+        model.create_comment(login_user, postid, text)
         return flask.redirect(redirect)
     if operation == 'delete':
-        username = flask.session['login']
+        login_user = flask.session['login']
         if 'commentid' not in flask.request.form:
             flask.abort(400)
         commentid = flask.request.form['commentid']
         comment_owner = model.get_comment_owner(commentid)['owner']
-        if username == comment_owner:
-            model.delete_comment(commentid)
+        if login_user == comment_owner:
+            model.delete_comment(login_user, commentid)
         else:
             flask.abort(403)
         return flask.redirect(redirect)
@@ -318,8 +318,8 @@ def update_posts():
     if 'login' not in flask.session:
         return flask.redirect(flask.url_for('show_index'))
     operation = flask.request.form['operation']
-    login_name = flask.session['login']
-    redirect = f'/users/{login_name}/'
+    login_user = flask.session['login']
+    redirect = f'/users/{login_user}/'
     if 'target' in flask.request.args:
         redirect = flask.request.args['target']
     if operation == 'create':
@@ -327,7 +327,7 @@ def update_posts():
         if fileobj is None or fileobj.filename == '':
             flask.abort(400)
         filename = model.upload_file(fileobj)
-        model.create_post(filename, login_name)
+        model.create_post(login_user, filename)
         return flask.redirect(redirect)
     if operation == 'delete':
         postid = flask.request.form.get('postid')
@@ -336,7 +336,7 @@ def update_posts():
         data = model.get_post_data(postid)
         filename = model.get_post_filename(postid)
         post_owner = data['owner']
-        if login_name == post_owner:
+        if login_user == post_owner:
             model.delete_post(postid, filename)
         else:
             flask.abort(403)
@@ -353,11 +353,11 @@ def update_follows():
     redirect = flask.url_for('show_index')
     if 'target' in flask.request.args:
         redirect = flask.request.args['target']
-    logname = flask.session['login']
+    login_user = flask.session['login']
     if operation == 'follow':
-        return follow(redirect, logname)
+        return follow(redirect, login_user)
     if operation == 'unfollow':
-        return unfollow(redirect, logname)
+        return unfollow(redirect, login_user)
     flask.abort(404)
 
 
@@ -399,7 +399,7 @@ def create(redirect):
     existing_username = model.get_user_data(data[0])
     if existing_username is not None:
         flask.abort(409)
-    model.put_new_user(data)
+    model.create_new_user(data)
     flask.session['login'] = data[0]
     return flask.redirect(redirect)
 

@@ -1,4 +1,5 @@
 """REST API for posts."""
+import json
 import flask
 import insta485
 from insta485 import model
@@ -13,7 +14,7 @@ def get_api():
         'posts': '/api/v1/posts/',
         'url': '/api/v1/'
     }
-    return flask.jsonify(**context)
+    return flask.jsonify(**context), 200
 
 
 @insta485.app.route('/api/v1/posts/')
@@ -21,13 +22,17 @@ def get_posts():
     if 'login' in flask.session:
         login_user = flask.session['login']
     else:
-        auth()
+        login_user = flask.request.authorization['username']
+        auth(login_user)
 
     postid_lte = flask.request.args.get('postid_lte', default=None, type=int)
     size = flask.request.args.get('size', default=10, type=int)
     page = flask.request.args.get('page', default=0, type=int)
     posts_data = model.get_posts(login_user, limit=size,
                                  offset=page*size, postid_lte=postid_lte)
+
+    if size < 0 or page < 0:
+        flask.abort(400)
 
     posts_object = []
     for item in posts_data:
@@ -50,23 +55,13 @@ def get_posts():
     return flask.jsonify(**context)
 
 
-# @insta485.app.route()
-# def get_page():
-#   if 'login' not in flask.session:
-#     flask.abort(403)
-#   login_user = flask.session['login']
-
-#   context = {}
-
-#   return flask.jsonify(**context)
-
-
 @insta485.app.route('/api/v1/posts/<int:postid_url_slug>/')
 def get_post(postid_url_slug):
     if 'login' in flask.session:
         login_user = flask.session['login']
     else:
-        auth()
+        login_user = flask.request.authorization['username']
+        auth(login_user)
 
     post_data = model.get_post_data(postid_url_slug)
 
@@ -82,15 +77,23 @@ def get_post(postid_url_slug):
         }
         comments_object.append(comment)
 
+    user_like_id = model.user_like_post(login_user, postid_url_slug)
+
+    if not user_like_id:
+        like_url = None
+    else:
+        like_url = f'/api/v1/likes/{user_like_id}/'
+
+
     context = {
         'comments': comments_object,
         'comments_url': f'/api/v1/comments/?postid={postid_url_slug}',
         'created': post_data['created'],
         'imgUrl': post_data['filename'],
         'likes': {
-            'lognameLikesThis': model.user_like_post(login_user, postid_url_slug),
+            'lognameLikesThis': user_like_id != -1,
             'numLikes': post_data['likes'],
-            'url': None,
+            'url': like_url,
         },
         'owner': post_data['owner'],
         'ownerImgUrl': post_data['user_filename'],
@@ -103,27 +106,77 @@ def get_post(postid_url_slug):
 
 
 @insta485.app.route('/api/v1/likes/', methods=['POST'])
-def post_likes():
+@insta485.app.route('/api/v1/likes/<int:likeid_url_slug>/', methods=['DELETE'])
+def post_likes(likeid_url_slug = None):
+    if 'login' in flask.session:
+        login_user = flask.session['login']
+    else:
+        login_user = flask.request.authorization['username']
+        auth(login_user)
+    
+    if flask.request.method == 'POST':
+        postid = flask.request.args.get('postid')
+        if postid is None:
+            flask.abort(404)
+
+        context = {
+            'postid': int(postid),
+            'url': '/api/v1/likes/' + postid + '/'
+        }
+
+        if not model.create_like(login_user, postid):
+            response = 200
+        else:
+            model.create_like(login_user, postid)
+            response = 201
+        
+        return flask.jsonify(**context), response
+    
+    if flask.request.method == 'DELETE':
+        success, response = model.delete_like(login_user, likeid=likeid_url_slug)
+        if not success:
+            flask.abort(response)
+
+        return '', response
+
+
+@insta485.app.route('/api/v1/comments/', methods=['POST'])
+@insta485.app.route('/api/v1/comments/<int:commentid_url_slug>/', methods=['DELETE'])
+def post_comments(commentid_url_slug = None):
     if 'login' in flask.session:
         login_user = flask.session['login']
     else:
         login_user = flask.request.authorization['username']
         auth(login_user)
 
-    postid = flask.request.args.get('postid')
-    if postid is None:
-        flask.abort(404)
+    if flask.request.method == 'POST':
+        postid = flask.request.args.get('postid')
+        if postid is None:
+            flask.abort(404)
+        
+        text = flask.request.json.get('text')
+        if text is None:
+            flask.abort(400)
 
-    context = {
-        'postid': int(postid),
-        'url': '/api/v1/likes/' + postid + '/'
-    }
-
-    if not model.user_like_post(login_user, postid):
-        response = 200
-    else:
-        model.update_likes(True, login_user, postid)
+        model.create_comment(login_user, postid, text)
+        commentid = model.get_last_insert_rowid()
+        
+        context = {
+            'commentid': commentid,
+            'lognameOwnsThis': True,
+            'owner': login_user,
+            'ownerShowUrl': f'/users/{login_user}/',
+            'text': text,
+            'url': f'/api/v1/comments/{commentid}/'
+        }
         response = 201
+    
+    if flask.request.method == 'DELETE':
+        success, response = model.delete_comment(login_user, commentid_url_slug)
+        if not success:
+            flask.abort(response)
+
+        return '', response
 
     return flask.jsonify(**context), response
 
