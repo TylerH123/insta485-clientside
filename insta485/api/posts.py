@@ -111,23 +111,23 @@ def post_likes():
     'url': '/api/v1/likes/' + postid + '/'
   }
   if not model.user_like_post(username, postid): 
-    res = 200 
+    response = 200 
   else:
     model.update_likes(True, username, postid)
-    res = 201
+    response = 201
 
-  return flask.jsonify(**context), res
+  return flask.jsonify(**context), response
 
 
 def auth(username):
   password = flask.request.authorization['password']
   if username is None or password is None or \
-       username == '' or password == '':
+     username == '' or password == '':
         flask.abort(403)
   data = model.get_user_data(username)
   if data is None:
-      flask.abort(403)
+    flask.abort(403)
   hashed_pass = model.hash_password(password,
                                     data['password'].split('$')[1])
   if data['password'] != hashed_pass:
-      flask.abort(403)
+    flask.abort(403)
