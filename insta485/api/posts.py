@@ -5,7 +5,7 @@ from insta485 import model
 import pprint
 
 
-@insta485.app.route()
+@insta485.app.route('/api/v1/')
 def get_api():
   context = {
     'comments': '/api/v1/comments/',
@@ -13,19 +13,46 @@ def get_api():
     'posts': '/api/v1/posts/',
     'url': '/api/v1/'
   }
+  return flask.jsonify(**context)
+
+
+@insta485.app.route('/api/v1/posts/')
+def get_posts():
+  if 'login' in flask.session: 
+    login_user = flask.session['login']
+  else:
+    auth() 
+  context = {
+    "next": "",
+    "results": [
+      {
+        "postid": 3,
+        "url": "/api/v1/posts/3/"
+      },
+      {
+        "postid": 2,
+        "url": "/api/v1/posts/2/"
+      },
+      {
+        "postid": 1,
+        "url": "/api/v1/posts/1/"
+      }
+    ],
+    "url": "/api/v1/posts/"
+  }
 
   return flask.jsonify(**context)
 
 
-@insta485.app.route()
-def get_page():
-  if 'login' not in flask.session:
-    flask.abort(403)
-  login_user = flask.session['login']
+# @insta485.app.route()
+# def get_page():
+#   if 'login' not in flask.session:
+#     flask.abort(403)
+#   login_user = flask.session['login']
 
-  context = {}
+#   context = {}
 
-  return flask.jsonify(**context)
+#   return flask.jsonify(**context)
 
 
 @insta485.app.route('/api/v1/posts/<int:postid_url_slug>/')
@@ -67,3 +94,37 @@ def get_post(postid_url_slug):
   }
 
   return flask.jsonify(**context)
+
+
+@insta485.app.route('/api/v1/likes/', methods=['POST'])
+def post_likes():
+  if 'login' in flask.session: 
+    login_user = flask.session['login']
+  else:
+    username = flask.request.authorization['username']
+    auth(username) 
+  postid = flask.request.args.get('postid')
+  context = {
+    'postid': int(postid),
+    'url': '/api/v1/likes/' + postid + '/'
+  }
+  if not model.user_like_post(username, postid): 
+    res = 200 
+  else:
+    res = 201
+
+  return flask.jsonify(**context), res
+
+
+def auth(username):
+  password = flask.request.authorization['password']
+  if username is None or password is None or \
+       username == '' or password == '':
+        flask.abort(403)
+  data = model.get_user_data(username)
+  if data is None:
+      flask.abort(403)
+  hashed_pass = model.hash_password(password,
+                                    data['password'].split('$')[1])
+  if data['password'] != hashed_pass:
+      flask.abort(403)
