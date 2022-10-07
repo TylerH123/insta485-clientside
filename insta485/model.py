@@ -382,7 +382,7 @@ def get_post_like_count(postid):
 
 
 def user_like_post(username, postid):
-    """Return true if user has liked post."""
+    """Return likeid if user has liked post."""
     connection = get_db()
     cur = connection.execute(
         'SELECT * '
@@ -391,9 +391,8 @@ def user_like_post(username, postid):
         (postid, username)
     )
     data = cur.fetchone()
-
     if data is None:
-        return 0
+        return -1
     return data['likeid']
 
 def create_like(username, postid):

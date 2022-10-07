@@ -77,7 +77,7 @@ def get_post(postid_url_slug):
 
     user_like_id = model.user_like_post(login_user, postid_url_slug)
 
-    if not user_like_id:
+    if user_like_id == -1:
         like_url = None
     else:
         like_url = f'/api/v1/likes/{user_like_id}/'
@@ -100,7 +100,6 @@ def get_post(postid_url_slug):
         'postid': post_data['postid'],
         'url': f'/api/v1/posts/{ postid_url_slug }/'
     }
-    print(context)
     return flask.jsonify(**context), 200
 
 
@@ -117,16 +116,17 @@ def post_likes(likeid_url_slug = None):
         if postid is None:
             flask.abort(404)
 
-        context = {
-            'postid': int(postid),
-            'url': '/api/v1/likes/' + postid + '/'
-        }
-
-        if not model.create_like(login_user, postid):
-            response = 200
-        else:
+        response = 200 
+        if model.user_like_post(login_user, postid) == -1:
             model.create_like(login_user, postid)
             response = 201
+
+        likeid = model.user_like_post(login_user, postid) 
+        context = {
+            'likeid': likeid,
+            'url': '/api/v1/likes/' + str(likeid) + '/'
+        }
+
         
         return flask.jsonify(**context), response
     

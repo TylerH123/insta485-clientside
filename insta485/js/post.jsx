@@ -19,28 +19,33 @@ export default function Post(props) {
                 return response.json();
             })
             .then((data) => {
-                setPostsToRender(data.results)
-                resultsPosts = data.results
+                resultsPosts = data.results;
             })
             .then(() => {
-                const posts = resultsPosts.map((post) => {
-                    let temp;
+                const postsPromises = resultsPosts.map((post) => new Promise((resolve, reject) => {
                     fetch(`/api/v1/posts/${post.postid}/`, { credentials: "same-origin" })
                         .then((response) => {
                             if (!response.ok) throw Error(response.statusText);
                             return response.json();
                         })
-                        .then((data) => { temp = data })
-                        .catch((error) => console.log(error));
+                        .then((data) => {
+                            console.log(data);
+                            resolve(data)
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            reject();
+                        })
+                }));
 
-                    return temp;
-                });
+                Promise.all(postsPromises).then(
+                    (formattedPosts) => {
+                        console.log(formattedPosts);
+                        setPostsToRender(formattedPosts);
+                    }
+                );
             })
             .catch((error) => console.log(error));
-
-
-
-        // setPostsToRender(posts);
     }, [props]);
 
     return (
