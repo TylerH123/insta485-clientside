@@ -47,7 +47,7 @@ def close_db(error):
 
 def get_last_insert_rowid():
     """Get last insert rowid"""
-    connection = insta485.model.get_db()
+    connection = get_db()
     cur = connection.execute('SELECT last_insert_rowid()')
     return cur.fetchone()['last_insert_rowid()']
 
@@ -55,7 +55,7 @@ def get_last_insert_rowid():
 # ===== LOGIN =====
 def create_new_user(user_data):
     """Insert new user into table."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     connection.execute(
         'INSERT INTO '
         'users (username, fullname, email, filename, password) '
@@ -96,7 +96,7 @@ def is_file(file):
 # ===== USER =====
 def get_user_data(username):
     """Get user data from table."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     cur = connection.execute(
         'SELECT * '
         'FROM users '
@@ -109,7 +109,7 @@ def get_user_data(username):
 
 def get_user_photo(username):
     """Get user photo link from table."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     cur = connection.execute(
         'SELECT filename '
         'FROM users '
@@ -121,7 +121,7 @@ def get_user_photo(username):
 
 def get_user_posts(username):
     """Get user's post from table."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     cur = connection.execute(
         'SELECT postid '
         'FROM posts '
@@ -137,7 +137,7 @@ def get_user_posts(username):
 
 def get_user_posts_filename(username):
     """Get user's post from table."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     cur = connection.execute(
         'SELECT filename '
         'FROM posts '
@@ -149,7 +149,7 @@ def get_user_posts_filename(username):
 
 def get_user_followers(username):
     """Get all the followers for a user."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     cur = connection.execute(
         'SELECT username1 '
         'FROM following '
@@ -165,7 +165,7 @@ def get_user_followers(username):
 
 def get_user_following(username):
     """Get all the people that the user is following."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     cur = connection.execute(
         'SELECT username2 '
         'FROM following '
@@ -181,7 +181,7 @@ def get_user_following(username):
 
 def get_user_not_following(username):
     """Get all the users that the user is not following."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     cur = connection.execute(
         'SELECT username '
         'FROM users '
@@ -208,7 +208,7 @@ def edit_user_profile(data):
         photo = get_user_photo(username)
     else:
         photo = data[3]
-    connection = insta485.model.get_db()
+    connection = get_db()
     connection.execute(
         'UPDATE users '
         'SET fullname = ?, email = ?, filename = ? '
@@ -220,7 +220,7 @@ def edit_user_profile(data):
 
 def update_password(username, password):
     """Update password for user."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     connection.execute(
         'UPDATE users '
         'SET password = ? '
@@ -232,7 +232,7 @@ def update_password(username, password):
 
 def set_follows(username1, username2):
     """Set username1 to follow username2."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     connection.execute(
         'INSERT INTO '
         'following (username1, username2) '
@@ -244,7 +244,7 @@ def set_follows(username1, username2):
 
 def delete_follows(username1, username2):
     """Delete username1 follows username2."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     connection.execute(
         'DELETE FROM '
         'following '
@@ -265,7 +265,7 @@ def delete_user(username):
     for file in files:
         path = insta485.app.config["UPLOAD_FOLDER"]/file
         os.remove(path)
-    connection = insta485.model.get_db()
+    connection = get_db()
     connection.execute(
         'DELETE FROM users '
         'WHERE username = ?',
@@ -276,7 +276,7 @@ def delete_user(username):
 
 def is_following(postid, username):
     """Check if current username is following owner of postid."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     cur = connection.execute(
         'SELECT owner '
         'FROM posts '
@@ -298,7 +298,7 @@ def is_following(postid, username):
 # ===== POSTS =====
 def get_posts(username, limit=10, offset=0, postid_lte=None):
     """Get posts from table by users followed by username."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     if postid_lte is None:
         cur = connection.execute(
             'SELECT DISTINCT posts.* '
@@ -327,7 +327,7 @@ def get_posts(username, limit=10, offset=0, postid_lte=None):
 
 def get_post_data(postid):
     """Get post data from table."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     cur = connection.execute(
         'SELECT * '
         'FROM posts '
@@ -345,7 +345,7 @@ def get_post_data(postid):
 
 def get_post_filename(postid):
     """Get post filename from table."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     cur = connection.execute(
         'SELECT filename '
         'FROM posts '
@@ -357,7 +357,7 @@ def get_post_filename(postid):
 
 def get_post_comments(postid):
     """Get comments for post."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     cur = connection.execute(
         'SELECT * '
         'FROM comments '
@@ -370,7 +370,7 @@ def get_post_comments(postid):
 
 def get_post_like_count(postid):
     """Get likes for post."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     cur = connection.execute(
         'SELECT likeid '
         'FROM likes '
@@ -383,7 +383,7 @@ def get_post_like_count(postid):
 
 def user_like_post(username, postid):
     """Return true if user has liked post."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     cur = connection.execute(
         'SELECT * '
         'FROM likes '
@@ -398,7 +398,7 @@ def user_like_post(username, postid):
 
 def create_like(username, postid):
     """Create new like for post."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     connection.execute(
         'INSERT INTO '
         'likes (owner, postid) '
@@ -412,7 +412,7 @@ def delete_like(username, postid=None, likeid=None):
     """Delete a like."""
 
     if postid is not None:
-        connection = insta485.model.get_db()
+        connection = get_db()
         connection.execute(
             'SELECT * FROM likes '
             'WHERE owner = ? AND postid = ?',
@@ -425,7 +425,7 @@ def delete_like(username, postid=None, likeid=None):
         )
 
     if likeid is not None:
-        connection = insta485.model.get_db()
+        connection = get_db()
         cur = connection.execute(
             'SELECT * FROM likes '
             'WHERE likeid = ?',
@@ -447,7 +447,7 @@ def delete_like(username, postid=None, likeid=None):
 
 def create_post(username, filename):
     """Create a post."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     connection.execute(
         'INSERT INTO '
         'posts (filename, owner)'
@@ -459,7 +459,7 @@ def create_post(username, filename):
 
 def delete_post(postid, filename):
     """Delete post rom posts."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     connection.execute(
         'DELETE FROM posts '
         'WHERE postid = ?',
@@ -474,7 +474,7 @@ def delete_post(postid, filename):
 
 def get_comment_owner(commentid):
     """Return the owner of a comment."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     cur = connection.execute(
         'SELECT owner '
         'FROM comments '
@@ -486,7 +486,7 @@ def get_comment_owner(commentid):
 
 def create_comment(username, postid, text):
     """Update comments for post."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     connection.execute(
         'INSERT INTO '
         'comments (owner, postid, text) '
@@ -498,7 +498,7 @@ def create_comment(username, postid, text):
 
 def delete_comment(username, commentid):
     """Delete comment from comments."""
-    connection = insta485.model.get_db()
+    connection = get_db()
     cur = connection.execute(
         'SELECT * FROM comments '
         'WHERE commentid = ?',
@@ -510,7 +510,7 @@ def delete_comment(username, commentid):
     if data['owner'] != username:
         return False, 403
 
-    connection = insta485.model.get_db()
+    connection = get_db()
     connection.execute(
         'DELETE FROM comments '
         'WHERE commentid = ?',

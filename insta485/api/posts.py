@@ -129,12 +129,11 @@ def post_likes(likeid_url_slug = None):
         
         return flask.jsonify(**context), response
     
-    if flask.request.method == 'DELETE':
-        success, response = model.delete_like(login_user, likeid=likeid_url_slug)
-        if not success:
-            flask.abort(response)
+    success, response = model.delete_like(login_user, likeid=likeid_url_slug)
+    if not success:
+        flask.abort(response)
 
-        return '', response
+    return '', response
 
 
 @insta485.app.route('/api/v1/comments/', methods=['POST'])
@@ -165,19 +164,17 @@ def post_comments(commentid_url_slug = None):
             'text': text,
             'url': f'/api/v1/comments/{commentid}/'
         }
-        response = 201
-    
-    if flask.request.method == 'DELETE':
-        success, response = model.delete_comment(login_user, commentid_url_slug)
-        if not success:
-            flask.abort(response)
+        return flask.jsonify(**context), 201
 
-        return '', response
+    success, response = model.delete_comment(login_user, commentid_url_slug)
+    if not success:
+        flask.abort(response)
 
-    return flask.jsonify(**context), response
+    return '', response
 
 
-def auth(username):
+
+def auth():
     if flask.request.authorization: 
         username = flask.request.authorization['username']
         password = flask.request.authorization['password']
