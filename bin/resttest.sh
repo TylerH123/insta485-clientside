@@ -14,6 +14,10 @@ set -x
 #   --session=./session.json \
 #   "http://localhost:8000/api/v1/posts/1/"
 
-http -a awdeorio:password \
-  POST \
-  "http://localhost:8000/api/v1/likes/?postid=3"
+# http -a awdeorio:password \
+#   POST \
+#   "http://localhost:8000/api/v1/likes/?postid=3"
+
+# http -a awdeorio:password "http://localhost:8000/api/v1/posts/?postid_lte=2"
+
+http "http://localhost:8000/api/v1/posts/?size=1"
