@@ -89,9 +89,9 @@ def get_post(postid_url_slug):
         'created': post_data['created'],
         'imgUrl': post_data['filename'],
         'likes': {
-            'lognameLikesThis': user_like_id != -1,
             'numLikes': post_data['likes'],
-            'url': like_url,
+            'lognameLikesThis': user_like_id != -1,
+            'url': like_url 
         },
         'owner': post_data['owner'],
         'ownerImgUrl': post_data['user_filename'],
@@ -100,6 +100,7 @@ def get_post(postid_url_slug):
         'postid': post_data['postid'],
         'url': f'/api/v1/posts/{ postid_url_slug }/'
     }
+    print(context)
     return flask.jsonify(**context), 200
 
 

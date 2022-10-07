@@ -10,9 +10,9 @@ set -x
 #   password=password \
 #   operation=login
 # # REST API request
-http \
-  --session=./session.json \
-  "http://localhost:8000/api/v1/posts/1/"
+# http \
+#   --session=./session.json \
+#   "http://localhost:8000/api/v1/posts/1/"
 
 # http -a awdeorio:password \
 #   POST \
