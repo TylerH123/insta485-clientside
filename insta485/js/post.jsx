@@ -29,7 +29,6 @@ export default function Post(props) {
                             return response.json();
                         })
                         .then((data) => {
-                            console.log(data);
                             resolve(data)
                         })
                         .catch((error) => {
@@ -40,7 +39,6 @@ export default function Post(props) {
 
                 Promise.all(postsPromises).then(
                     (formattedPosts) => {
-                        console.log(formattedPosts);
                         setPostsToRender(formattedPosts);
                     }
                 );
