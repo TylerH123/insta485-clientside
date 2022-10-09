@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import Post from "./post";
+import Index from ".";
 
 const root = createRoot(document.getElementById("reactEntry"));
 
-root.render(<Post url="/api/v1/posts/" />);
+root.render(<Index url="/api/v1/posts/" />);

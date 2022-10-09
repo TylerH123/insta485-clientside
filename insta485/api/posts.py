@@ -90,7 +90,7 @@ def get_post(postid_url_slug):
         'imgUrl': post_data['filename'],
         'likes': {
             'numLikes': post_data['likes'],
-            'lognameLikesThis': user_like_id != -1,
+            'lognameLikesThis': bool(user_like_id),
             'url': like_url 
         },
         'owner': post_data['owner'],
@@ -117,7 +117,7 @@ def post_likes(likeid_url_slug = None):
             flask.abort(404)
 
         response = 200 
-        if model.user_like_post(login_user, postid) == -1:
+        if not model.user_like_post(login_user, postid):
             model.create_like(login_user, postid)
             response = 201
 

@@ -392,7 +392,7 @@ def user_like_post(username, postid):
     )
     data = cur.fetchone()
     if data is None:
-        return -1
+        return 0
     return data['likeid']
 
 def create_like(username, postid):
