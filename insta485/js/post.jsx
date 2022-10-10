@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import moment from "moment/moment";
 
 export default function Post(props) {
-  const { url, isPostPage } = props;
+  const { url } = props;
   const [postDetails, setPostDetails] = useState(null);
   const [postLiked, setPostLiked] = useState(false);
   const [postNumLikes, setPostNumLikes] = useState(0);
@@ -47,6 +47,16 @@ export default function Post(props) {
     }
   };
 
+  const submitComment = () => {
+    fetch(`/api/v1/comments/?postid=${postDetails.postid}`, {
+      method: "POST",
+      credentials: "same-origin",
+    })
+    .then((response) => {
+      if (!response.ok) throw Error(response.statusText);
+    })
+  }
+
   useEffect(() => {
     fetch(url, { credentials: "same-origin" })
       .then((response) => {
@@ -79,7 +89,7 @@ export default function Post(props) {
           </a>
           <a href={`/posts/${postDetails.postid}/`}>
             <div className="timestamp">
-              {moment(postDetails.created).fromNow()}
+              {moment.utc(postDetails.created).fromNow()}
             </div>
           </a>
         </div>
@@ -119,29 +129,14 @@ export default function Post(props) {
               <p>{comment.text}</p>
             </div>
           ))}
-          {isPostPage && (
-            <form
-              className="comment-form comment_input"
-              action="/comments/?target=/"
-              method="post"
-              encType="multipart/form-data"
-            >
-              <input type="hidden" name="operation" value="create" />
-              <input type="hidden" name="postid" value={postDetails.postid} />
-              <input
-                className="comment_input_text"
-                type="text"
-                name="text"
-                required
-              />
-              <input
-                className="btn btn-sm btn-primary"
-                type="submit"
-                name="comment"
-                value="comment"
-              />
-            </form>
-          )}
+          <form className="comment-form" onSubmit={}>
+            <input
+              className="comment_input"
+              type="text"
+              name="text"
+              required
+            />
+          </form>
         </div>
       </div>
     )
