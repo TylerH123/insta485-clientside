@@ -335,6 +335,8 @@ def get_post_data(postid):
         (postid, )
     )
     post = cur.fetchone()
+    if post is None:
+        flask.abort(404)
     post['filename'] = '/uploads/' + post['filename']
     post['user_filename'] = '/uploads/' + get_user_photo(post['owner'])
     post['comments'] = get_post_comments(postid)
