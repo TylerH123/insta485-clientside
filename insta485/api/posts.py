@@ -76,8 +76,7 @@ def get_post(postid_url_slug):
         comments_object.append(comment)
 
     user_like_id = model.user_like_post(login_user, postid_url_slug)
-
-    if user_like_id == -1:
+    if not user_like_id:
         like_url = None
     else:
         like_url = f'/api/v1/likes/{user_like_id}/'
