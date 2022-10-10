@@ -149,7 +149,7 @@ def post_comments(commentid_url_slug = None):
         if postid is None:
             flask.abort(404)
         
-        text = flask.request.json.get('text')
+        text = flask.request.form.get('text')
         if text is None:
             flask.abort(400)
 

@@ -6,6 +6,7 @@ export default function Post(props) {
   const { url } = props;
   const [postDetails, setPostDetails] = useState(null);
   const [postLiked, setPostLiked] = useState(false);
+  const [commentText, setCommentText] = useState('');
   const [postNumLikes, setPostNumLikes] = useState(0);
 
   const updatePostLiked = () => {
@@ -47,16 +48,24 @@ export default function Post(props) {
     }
   };
 
-  const submitComment = () => {
+  // http -a awdeorio:password \
+  // POST \
+  // "http://localhost:8000/api/v1/comments/?postid=3" \
+  // text='Comment sent from httpie'
+
+  const submitComment = (e) => {
+    e.preventDefault();
     fetch(`/api/v1/comments/?postid=${postDetails.postid}`, {
       method: "POST",
       credentials: "same-origin",
+      body: JSON.stringify({ 'text': commentText }),
     })
-    .then((response) => {
-      if (!response.ok) throw Error(response.statusText);
-    })
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+      });
   }
 
+  // Get data for post, runs before render
   useEffect(() => {
     fetch(url, { credentials: "same-origin" })
       .then((response) => {
@@ -129,11 +138,12 @@ export default function Post(props) {
               <p>{comment.text}</p>
             </div>
           ))}
-          <form className="comment-form" onSubmit={}>
+          <form className="comment-form" onSubmit={(e) => submitComment(e)}>
             <input
               className="comment_input"
               type="text"
               name="text"
+              onChange={(e) => { setCommentText(e.target.value); console.log(commentText); }}
               required
             />
           </form>
@@ -145,5 +155,4 @@ export default function Post(props) {
 
 Post.propTypes = {
   url: PropTypes.string.isRequired,
-  isPostPage: PropTypes.bool.isRequired,
 };
