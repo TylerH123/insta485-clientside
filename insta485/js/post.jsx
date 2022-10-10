@@ -143,7 +143,7 @@ export default function Post(props) {
               className="comment_input"
               type="text"
               name="text"
-              onChange={(e) => { setCommentText(e.target.value); console.log(commentText); }}
+              onChange={(e) => { setCommentText(e.target.value); console.log(e.target.value); }}
               required
             />
           </form>
