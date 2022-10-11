@@ -9,6 +9,22 @@ export default function Post(props) {
   const [commentText, setCommentText] = useState('');
   const [postNumLikes, setPostNumLikes] = useState(0);
 
+  const getPostData = () => {
+    fetch(url, { credentials: "same-origin" })
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((data) => {
+        setPostDetails(data);
+        setPostLiked(data.likes.lognameLikesThis);
+        setPostNumLikes(data.likes.numLikes);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   const updatePostLiked = () => {
     if (postLiked) {
       fetch(postDetails.likes.url, {
@@ -48,38 +64,27 @@ export default function Post(props) {
     }
   };
 
-  // http -a awdeorio:password \
-  // POST \
-  // "http://localhost:8000/api/v1/comments/?postid=3" \
-  // text='Comment sent from httpie'
-
   const submitComment = (e) => {
     e.preventDefault();
     fetch(`/api/v1/comments/?postid=${postDetails.postid}`, {
       method: "POST",
       credentials: "same-origin",
-      body: JSON.stringify({ 'text': commentText }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ text: commentText }),
     })
       .then((response) => {
         if (!response.ok) throw Error(response.statusText);
+        getPostData();
       });
+    setCommentText('');
+
   }
 
   // Get data for post, runs before render
   useEffect(() => {
-    fetch(url, { credentials: "same-origin" })
-      .then((response) => {
-        if (!response.ok) throw Error(response.statusText);
-        return response.json();
-      })
-      .then((data) => {
-        setPostDetails(data);
-        setPostLiked(data.likes.lognameLikesThis);
-        setPostNumLikes(data.likes.numLikes);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    getPostData();
   }, [props]);
 
   return (
@@ -143,7 +148,8 @@ export default function Post(props) {
               className="comment_input"
               type="text"
               name="text"
-              onChange={(e) => { setCommentText(e.target.value); console.log(e.target.value); }}
+              value={commentText}
+              onChange={(e) => { setCommentText(e.target.value); }}
               required
             />
           </form>

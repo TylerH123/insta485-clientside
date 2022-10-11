@@ -149,6 +149,9 @@ def post_comments(commentid_url_slug = None):
         if postid is None:
             flask.abort(404)
         
+        if 'text' not in flask.request.json: 
+            flask.abort(400)
+
         text = flask.request.json.get('text')
         if text is None:
             flask.abort(400)
