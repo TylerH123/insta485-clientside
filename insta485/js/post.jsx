@@ -3,13 +3,14 @@ import PropTypes from "prop-types";
 import moment from "moment/moment";
 
 export default function Post(props) {
-  const { url } = props;
   const [postDetails, setPostDetails] = useState(null);
   const [postLiked, setPostLiked] = useState(false);
-  const [commentText, setCommentText] = useState('');
   const [postNumLikes, setPostNumLikes] = useState(0);
+  const [commentText, setCommentText] = useState('');
 
   const getPostData = () => {
+    const { url } = props;
+
     fetch(url, { credentials: "same-origin" })
       .then((response) => {
         if (!response.ok) throw Error(response.statusText);
@@ -79,7 +80,22 @@ export default function Post(props) {
         getPostData();
       });
     setCommentText('');
+  }
 
+  const deleteComment = (commentid) => {
+    fetch(`/api/v1/comments/${commentid}`, {
+      method: "DELETE",
+      credentials: "same-origin",
+    })
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+      })
+      .then(() => {
+        getPostData();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   // Get data for post, runs before render
@@ -111,6 +127,7 @@ export default function Post(props) {
           className="photo"
           alt={postDetails.imgUrl}
           src={postDetails.imgUrl}
+          onDoubleClick={postLiked ? null : updatePostLiked}
         />
         <div className="post_stats">
           <div>
@@ -141,6 +158,13 @@ export default function Post(props) {
                 <div className="username">{comment.owner}</div>
               </a>
               <p>{comment.text}</p>
+              {
+                comment.lognameOwnsThis ?
+                  <button type="button" className="btn btn-sm btn-danger delete-comment-button" onClick={() => { deleteComment(comment.commentid) }}>
+                    Delete
+                  </button> : null
+              }
+
             </div>
           ))}
           <form className="comment-form" onSubmit={(e) => submitComment(e)}>
@@ -149,7 +173,7 @@ export default function Post(props) {
               type="text"
               name="text"
               value={commentText}
-              onChange={(e) => { setCommentText(e.target.value); }}
+              onChange={(e) => setCommentText(e.target.value)}
               required
             />
           </form>
