@@ -11,7 +11,7 @@ export default function Index(props) {
   useEffect(() => {
     const { url } = props;
 
-    fetch(url, { credentials: "same-origin" })
+    fetch(`${url}?size=1`, { credentials: "same-origin" })
       .then((response) => {
         if (!response.ok) throw Error(response.statusText);
         return response.json();
@@ -24,6 +24,7 @@ export default function Index(props) {
   }, [props]);
 
   const getNextData = () => {
+    console.log('reached');
     fetch(nextPostsUrl.current, { credentials: "same-origin" })
       .then((response) => {
         if (!response.ok) throw Error(response.statusText);
@@ -31,6 +32,7 @@ export default function Index(props) {
       })
       .then((data) => {
         setPostsToRender([...postsToRender, ...data.results]);
+        nextPostsUrl.current = data.next;
       })
       .catch((error) => console.log(error));
   }
@@ -41,11 +43,11 @@ export default function Index(props) {
         id="feed"
         dataLength={postsToRender.length}
         next={getNextData}
-        loader={<h4>Loading...</h4>}
-        endMessage={
-          <p style={{ textAlign: 'center' }}>
-            <b>Yay! You have seen it all</b>
-          </p>
+        hasMore={nextPostsUrl.current !== ''}
+        loader={
+          <h5 style={{ textAlign: 'center' }}>
+            Loading...
+          </h5>
         }
       >
         {postsToRender.map((post) => (
