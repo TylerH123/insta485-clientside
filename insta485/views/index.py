@@ -7,7 +7,6 @@ URLs include:
 import flask
 import insta485
 from insta485 import model
-import pprint
 
 
 @insta485.app.route('/uploads/<path:name>')
@@ -20,7 +19,7 @@ def retrieve_image(name):
         return flask.send_from_directory(
             insta485.app.config['UPLOAD_FOLDER'], name, as_attachment=True
         )
-    flask.abort(403)
+    return flask.abort(403)
 
 
 @insta485.app.route('/')
@@ -248,7 +247,7 @@ def update_accounts():
         return update(redirect)
     if operation == 'delete':
         return delete(redirect)
-    flask.abort(404)
+    return flask.abort(404)
 
 
 @insta485.app.route('/likes/', methods=['POST'])
@@ -278,7 +277,7 @@ def update_likes():
         else:
             flask.abort(409)
         return flask.redirect(redirect)
-    flask.abort(404)
+    return flask.abort(404)
 
 
 @insta485.app.route('/comments/', methods=['POST'])
@@ -309,7 +308,7 @@ def update_comments():
         else:
             flask.abort(403)
         return flask.redirect(redirect)
-    flask.abort(404)
+    return flask.abort(404)
 
 
 @insta485.app.route('/posts/', methods=['POST'])
@@ -341,7 +340,7 @@ def update_posts():
         else:
             flask.abort(403)
         return flask.redirect(redirect)
-    flask.abort(404)
+    return flask.abort(404)
 
 
 @insta485.app.route('/following/', methods=['POST'])
@@ -358,7 +357,7 @@ def update_follows():
         return follow(redirect, login_user)
     if operation == 'unfollow':
         return unfollow(redirect, login_user)
-    flask.abort(404)
+    return flask.abort(404)
 
 
 def login(redirect):
@@ -385,7 +384,7 @@ def create(redirect):
     fields = ['username', 'fullname', 'email', 'password', 'file']
     for field in fields:
         if field == 'file':
-            fileobj = flask.request.files.get(field) 
+            fileobj = flask.request.files.get(field)
             if fileobj is None or fileobj.filename == '':
                 flask.abort(400)
             data_field = model.upload_file(fileobj)
@@ -434,10 +433,15 @@ def update(redirect):
     old_pass = flask.request.form.get('password')
     new_pass1 = flask.request.form.get('new_password1')
     new_pass2 = flask.request.form.get('new_password2')
-    if old_pass is None or new_pass1 is None or \
-       new_pass2 is None or old_pass == '' or \
-       new_pass1 == '' or new_pass2 == '':
-        flask.abort(400)
+
+    def check_pass():
+        if old_pass is None or new_pass1 is None or \
+           new_pass2 is None:
+            flask.abort(400)
+        if old_pass == '' or new_pass1 == '' or \
+           new_pass2 == '':
+            flask.abort(400)
+    check_pass()
     login_user = flask.session['login']
     data = model.get_user_data(login_user)
     hashed_pass = model.hash_password(old_pass,

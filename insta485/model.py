@@ -1,5 +1,4 @@
 """Insta485 model (database) API."""
-from re import L
 import sqlite3
 import os
 import uuid
@@ -46,7 +45,7 @@ def close_db(error):
 
 
 def get_last_insert_rowid():
-    """Get last insert rowid"""
+    """Get last insert rowid."""
     connection = get_db()
     cur = connection.execute('SELECT last_insert_rowid()')
     return cur.fetchone()['last_insert_rowid()']
@@ -397,6 +396,7 @@ def user_like_post(username, postid):
         return 0
     return data['likeid']
 
+
 def create_like(username, postid):
     """Create new like for post."""
     connection = get_db()
@@ -411,7 +411,6 @@ def create_like(username, postid):
 
 def delete_like(username, postid=None, likeid=None):
     """Delete a like."""
-
     if postid is not None:
         connection = get_db()
         connection.execute(
@@ -437,13 +436,15 @@ def delete_like(username, postid=None, likeid=None):
             return False, 404
         if data['owner'] != username:
             return False, 403
-        
+
         connection.execute(
             'DELETE FROM likes '
             'WHERE likeid = ?',
             (likeid, )
         )
         return True, 204
+
+    return False, 403
 
 
 def create_post(username, filename):

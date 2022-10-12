@@ -171,7 +171,6 @@ export default function Post(props) {
             <input
               className="comment_input"
               type="text"
-              name="text"
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               required
