@@ -45,7 +45,8 @@ def get_posts():
         next_link = ''
     else:
         postid_lte = postid_lte or posts_object[0]["postid"]
-        next_link = f'/api/v1/posts/?size={size}&page={page + 1}&postid_lte={postid_lte}'
+        ext = f'?size={size}&page={page + 1}&postid_lte={postid_lte}'
+        next_link = f'/api/v1/posts/{ext}'
     if len(flask.request.args):
         url = flask.request.full_path
     else:
