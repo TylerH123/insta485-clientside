@@ -24,7 +24,7 @@ export default function Index(props) {
   }, [props]);
 
   const getNextData = () => {
-    console.log('reached');
+    console.log(nextPostsUrl.current);
     fetch(nextPostsUrl.current, { credentials: "same-origin" })
       .then((response) => {
         if (!response.ok) throw Error(response.statusText);
