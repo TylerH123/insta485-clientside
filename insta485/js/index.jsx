@@ -11,7 +11,7 @@ export default function Index(props) {
   useEffect(() => {
     const { url } = props;
 
-    fetch(`${url}?size=1`, { credentials: "same-origin" })
+    fetch(url, { credentials: "same-origin" })
       .then((response) => {
         if (!response.ok) throw Error(response.statusText);
         return response.json();
@@ -48,6 +48,11 @@ export default function Index(props) {
           <h5 style={{ textAlign: 'center' }}>
             Loading...
           </h5>
+        }
+        endMessage={
+          <p style={{ textAlign: 'center' }}>
+            <b>Yay! You have seen it all</b>
+          </p>
         }
       >
         {postsToRender.map((post) => (
