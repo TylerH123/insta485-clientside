@@ -7,11 +7,16 @@ set -x
 
 # create tarball
 tar \
+  --disable-copyfile \
   --exclude '*__pycache__*' \
   -czvf submit.tar.gz \
   bin \
   insta485 \
-  setup.py \
-  sql \
-  deployed_insta485.html \
-  deployed_insta485.log
+  package-lock.json \
+  package.json \
+  setup.py sql \
+  webpack.config.js \
+  deployed_index.html \
+  deployed_index.log \
+  deployed_bundle.js \
+  deployed_bundle.log

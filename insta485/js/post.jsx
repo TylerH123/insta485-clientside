@@ -8,24 +8,6 @@ export default function Post(props) {
   const [postNumLikes, setPostNumLikes] = useState(0);
   const [commentText, setCommentText] = useState("");
 
-  const getPostData = () => {
-    const { url } = props;
-
-    fetch(url, { credentials: "same-origin" })
-      .then((response) => {
-        if (!response.ok) throw Error(response.statusText);
-        return response.json();
-      })
-      .then((data) => {
-        setPostDetails(data);
-        setPostLiked(data.likes.lognameLikesThis);
-        setPostNumLikes(data.likes.numLikes);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   const updatePostLiked = () => {
     if (postLiked) {
       fetch(postDetails.likes.url, {
@@ -113,7 +95,21 @@ export default function Post(props) {
 
   // Get data for post, runs before render
   useEffect(() => {
-    getPostData();
+    const { url } = props;
+
+    fetch(url, { credentials: "same-origin" })
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((data) => {
+        setPostDetails(data);
+        setPostLiked(data.likes.lognameLikesThis);
+        setPostNumLikes(data.likes.numLikes);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, [props]);
 
   return (
