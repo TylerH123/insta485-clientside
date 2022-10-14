@@ -6,7 +6,7 @@ export default function Post(props) {
   const [postDetails, setPostDetails] = useState(null);
   const [postLiked, setPostLiked] = useState(false);
   const [postNumLikes, setPostNumLikes] = useState(0);
-  const [commentText, setCommentText] = useState('');
+  const [commentText, setCommentText] = useState("");
 
   const getPostData = () => {
     const { url } = props;
@@ -24,7 +24,7 @@ export default function Post(props) {
       .catch((error) => {
         console.log(error);
       });
-  }
+  };
 
   const updatePostLiked = () => {
     if (postLiked) {
@@ -71,7 +71,7 @@ export default function Post(props) {
       method: "POST",
       credentials: "same-origin",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ text: commentText }),
     })
@@ -87,8 +87,8 @@ export default function Post(props) {
       .catch((error) => {
         console.log(error);
       });
-    setCommentText('');
-  }
+    setCommentText("");
+  };
 
   const deleteComment = (commentid) => {
     fetch(`/api/v1/comments/${commentid}/`, {
@@ -100,14 +100,16 @@ export default function Post(props) {
       })
       .then(() => {
         const newDetails = { ...postDetails };
-        const commentInd = newDetails.comments.findIndex(x => x.commentid === commentid);
+        const commentInd = newDetails.comments.findIndex(
+          (x) => x.commentid === commentid
+        );
         newDetails.comments.splice(commentInd, 1);
         setPostDetails(newDetails);
       })
       .catch((error) => {
         console.log(error);
       });
-  }
+  };
 
   // Get data for post, runs before render
   useEffect(() => {
@@ -169,13 +171,17 @@ export default function Post(props) {
                 <div className="username">{comment.owner}</div>
               </a>
               <p>{comment.text}</p>
-              {
-                comment.lognameOwnsThis ?
-                  <button type="button" className="btn btn-sm btn-danger delete-comment-button" onClick={() => { deleteComment(comment.commentid) }}>
-                    Delete
-                  </button> : null
-              }
-
+              {comment.lognameOwnsThis ? (
+                <button
+                  type="button"
+                  className="btn btn-sm btn-danger delete-comment-button"
+                  onClick={() => {
+                    deleteComment(comment.commentid);
+                  }}
+                >
+                  Delete
+                </button>
+              ) : null}
             </div>
           ))}
           <form className="comment-form" onSubmit={(e) => submitComment(e)}>

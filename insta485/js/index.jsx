@@ -6,7 +6,7 @@ import Post from "./post";
 
 export default function Index(props) {
   const [postsToRender, setPostsToRender] = useState([]);
-  const nextPostsUrl = useRef('');
+  const nextPostsUrl = useRef("");
 
   useEffect(() => {
     const { url } = props;
@@ -35,7 +35,7 @@ export default function Index(props) {
         nextPostsUrl.current = data.next;
       })
       .catch((error) => console.log(error));
-  }
+  };
 
   return (
     <div id="site_body">
@@ -43,14 +43,10 @@ export default function Index(props) {
         id="feed"
         dataLength={postsToRender.length}
         next={getNextData}
-        hasMore={nextPostsUrl.current !== ''}
-        loader={
-          <h5 style={{ textAlign: 'center' }}>
-            Loading...
-          </h5>
-        }
+        hasMore={nextPostsUrl.current !== ""}
+        loader={<h5 style={{ textAlign: "center" }}>Loading...</h5>}
         endMessage={
-          <p style={{ textAlign: 'center' }}>
+          <p style={{ textAlign: "center" }}>
             <b>Yay! You have seen it all</b>
           </p>
         }
