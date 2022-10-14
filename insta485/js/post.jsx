@@ -91,7 +91,7 @@ export default function Post(props) {
   }
 
   const deleteComment = (commentid) => {
-    fetch(`/api/v1/comments/${commentid}`, {
+    fetch(`/api/v1/comments/${commentid}/`, {
       method: "DELETE",
       credentials: "same-origin",
     })
@@ -146,7 +146,7 @@ export default function Post(props) {
           </div>
           {postLiked ? (
             <button
-              className="btn btn-sm btn-danger"
+              className="btn btn-sm btn-danger like-unlike-button"
               type="button"
               onClick={updatePostLiked}
             >
@@ -154,7 +154,7 @@ export default function Post(props) {
             </button>
           ) : (
             <button
-              className="btn btn-sm btn-primary"
+              className="btn btn-sm btn-primary like-unlike-button"
               type="button"
               onClick={updatePostLiked}
             >
