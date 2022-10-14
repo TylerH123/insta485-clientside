@@ -7,7 +7,6 @@ set -x
 
 # create tarball
 tar \
-  --disable-copyfile \
   --exclude '*__pycache__*' \
   -czvf submit.tar.gz \
   bin \
