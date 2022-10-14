@@ -77,7 +77,15 @@ export default function Post(props) {
     })
       .then((response) => {
         if (!response.ok) throw Error(response.statusText);
-        getPostData();
+        return response.json();
+      })
+      .then((data) => {
+        const newDetails = { ...postDetails };
+        newDetails.comments = [...newDetails.comments, data];
+        setPostDetails(newDetails);
+      })
+      .catch((error) => {
+        console.log(error);
       });
     setCommentText('');
   }
@@ -91,7 +99,10 @@ export default function Post(props) {
         if (!response.ok) throw Error(response.statusText);
       })
       .then(() => {
-        getPostData();
+        const newDetails = { ...postDetails };
+        const commentInd = newDetails.comments.findIndex(x => x.commentid === commentid);
+        newDetails.comments.splice(commentInd, 1);
+        setPostDetails(newDetails);
       })
       .catch((error) => {
         console.log(error);

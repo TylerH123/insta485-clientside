@@ -69,7 +69,7 @@ def get_post(postid_url_slug):
 
     post_data = model.get_post_data(postid_url_slug)
 
-    comments_object = []
+    comments_list = []
     for item in post_data['comments']:
         comment = {
             'commentid': item['commentid'],
@@ -79,7 +79,7 @@ def get_post(postid_url_slug):
             'text': item['text'],
             'url': f'/api/v1/comments/{ item["commentid"] }/'
         }
-        comments_object.append(comment)
+        comments_list.append(comment)
 
     user_like_id = model.user_like_post(login_user, postid_url_slug)
     if not user_like_id:
@@ -87,7 +87,7 @@ def get_post(postid_url_slug):
     else:
         like_url = f'/api/v1/likes/{user_like_id}/'
     context = {
-        'comments': comments_object,
+        'comments': comments_list,
         'comments_url': f'/api/v1/comments/?postid={postid_url_slug}',
         'created': post_data['created'],
         'imgUrl': post_data['filename'],
